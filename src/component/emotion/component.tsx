@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import React, { ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import theme from '../../styles/theme';
 import {
   BannerProps,
@@ -35,7 +36,7 @@ export const ContainerComponent = ({ children }: ContainerType) => {
   return (
     <div
       css={css`
-        width: 100%;
+        width: 120rem;
         padding: 5.6rem 7.2rem;
         background-color: ${theme.palette.gray[900]};
         border-radius: 1.6rem;
@@ -118,13 +119,55 @@ Tag.defaultProps = {
 /**
  * Projectbox 컴포넌트
  * @component ProjectBox
- * @param {string} props.title - 프로젝트 제목
- * @param {string} props.content - 프로젝트 내용
- * @param {string[]} props.tags - 프로젝트 태그들의 배열
+ * @param {ProjectBoxProps} projectData - 프로젝트 정보
  */
 
-export const ProjectBox = ({ title, content, tags }: ProjectBoxProps) => {
-  const generatedTags = tags.length === 0 ? ['임의 태그'] : tags;
+export const ProjectBox = ({ projectData }: { projectData: ProjectBoxProps }) => {
+  const { id, projectName, projectDescription, imageUrl } = projectData;
+
+  const navigate = useNavigate();
+
+  return (
+    <div
+      role="presentation"
+      onClick={() => {
+        navigate(`/project/detail/${id}`);
+      }}
+      css={css`
+        display: flex;
+        flex-direction: column;
+        padding: 1.6rem 2rem;
+        width: 38.4rem;
+        height: 40rem;
+        background: ${theme.palette.gray[900]};
+        border-radius: 1.6rem;
+        gap: 1.6rem;
+        cursor: pointer;
+      `}
+    >
+      <img
+        src={imageUrl}
+        alt="Project"
+        css={css`
+          height: 22.4rem;
+          width: 35.2rem;
+          border-radius: 1.2rem;
+          object-fit: cover;
+        `}
+      />
+
+      <TagList>
+        <Tag>{projectData?.projectCategory}</Tag>
+        <Tag>{projectData?.belongedClubName ? projectData.belongedClubName : '클럽 없음'}</Tag>
+      </TagList>
+
+      <Header1>{projectName}</Header1>
+      <Body2>{projectDescription}</Body2>
+    </div>
+  );
+};
+
+export const LoadingBox = () => {
   return (
     <div
       css={css`
@@ -134,21 +177,20 @@ export const ProjectBox = ({ title, content, tags }: ProjectBoxProps) => {
         width: 38.4rem;
         height: 40rem;
         background: ${theme.palette.gray[900]};
-        color: ${theme.palette.gray.white};
         border-radius: 1.6rem;
         gap: 1.6rem;
+        cursor: pointer;
       `}
     >
-      <img src="https://i.ibb.co/yktPkxP/image-5.png" alt="Project" />
-
-      <TagList>
-        {generatedTags.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
-        ))}
-      </TagList>
-
-      <Header1>{title}</Header1>
-      <Body2>{content}</Body2>
+      <div
+        css={css`
+          height: 22.4rem;
+          width: 35.2rem;
+          border-radius: 1.2rem;
+          object-fit: cover;
+          background-color: ${theme.palette.gray[600]};
+        `}
+      />
     </div>
   );
 };
@@ -229,6 +271,7 @@ export const Banner = ({ large }: BannerProps) => {
       css={css`
         border-radius: 1.2rem;
         width: 100%;
+        height: ${large ? 41.5 : 13.6}rem;
         padding: ${large ? 4.8 : 2.4}rem;
         background: #4a7edc;
         display: flex;
@@ -239,7 +282,7 @@ export const Banner = ({ large }: BannerProps) => {
     >
       <img
         alt="banner_img"
-        src={`${process.env.PUBLIC_URL}/img/3d-construction-made-of-glass-abstract-geometrical-composition 1.png`}
+        src={`${process.env.PUBLIC_URL}/img/banner.png`}
         css={css`
           width: ${large ? 29.4 : 10.5}rem;
         `}
@@ -248,14 +291,14 @@ export const Banner = ({ large }: BannerProps) => {
       <Section gap={large ? '2.4' : '1.2'}>
         <h1
           css={css`
-            ${large ? theme.typography.title : theme.typography.header2}
+            ${large ? theme.typography.title : theme.typography.header1}
           `}
         >
           챌린저스 서비스 오픈
         </h1>
         <h2
           css={css`
-            ${large ? theme.typography.header1 : theme.typography.body3Bold}
+            ${large ? theme.typography.header1 : theme.typography.body2Bold}
           `}
         >
           사이드 프로젝트 기록과 추적을 용이하게
@@ -280,21 +323,23 @@ export const Banner = ({ large }: BannerProps) => {
  */
 export const ClubComponent = ({ name, clubImg }: ClubComponentProps) => {
   return (
-    <span
+    <div
       css={css`
-        height: 3rem;
-        padding-right: 4.3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       `}
     >
       <img
         css={css`
-          height: '100%';
-          object-fit: 'cover';
+          max-width: 16rem;
+          max-height: 4rem;
+          object-fit: cover;
         `}
         src={clubImg}
         alt={name}
       />
-    </span>
+    </div>
   );
 };
 
