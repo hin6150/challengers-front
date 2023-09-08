@@ -2,27 +2,22 @@
 import { css } from '@emotion/react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ContainerType } from '../../types/globalType';
+import { v4 as uuidv4 } from 'uuid';
+import { ClubArrayContainerProps, ClubLogoProps, ContainerType } from '../../types/globalType';
 import { Body1 } from '../emotion/GlobalStyle';
-import { FlexWrapContainer, LoadingBox } from '../emotion/component';
+import { ClubComponent } from '../emotion/component';
+import { logoAnimation, logoAnimationBack } from '../../json/data';
 
 export const ClubList = ({ children }: ContainerType) => (
   <div
     css={css`
-      height: 13.6rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      row-gap: 2.4rem;
       overflow: hidden;
     `}
   >
-    <div
-      css={css`
-        width: 100%;
-        display: flex;
-        gap: 4.4rem;
-        flex-wrap: wrap;
-      `}
-    >
-      {children}
-    </div>
+    {children}
   </div>
 );
 
@@ -48,13 +43,20 @@ export const DivisionLine = () => (
   />
 );
 
-export const LoadingContainer = () => (
-  <FlexWrapContainer>
-    <LoadingBox />
-    <LoadingBox />
-    <LoadingBox />
-    <LoadingBox />
-    <LoadingBox />
-    <LoadingBox />
-  </FlexWrapContainer>
-);
+export const ClubArrayContainer = ({ clubArray, index }: ClubArrayContainerProps) => {
+  return (
+    <div
+      css={css`
+        width: 120rem;
+        display: flex;
+        justify-content: space-around;
+        animation: ${index === 0 || index === 2 ? logoAnimation : logoAnimationBack} 20s linear
+          infinite;
+      `}
+    >
+      {clubArray.map((club: ClubLogoProps) => (
+        <ClubComponent key={uuidv4()} logo={club.logoUrl} name={club.logoUrl} />
+      ))}
+    </div>
+  );
+};

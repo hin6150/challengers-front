@@ -1,37 +1,45 @@
 /** @jsxImportSource @emotion/react */
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Banner,
-  ClubComponent,
   FlexWrapContainer,
+  LoadingContainer,
   ProjectBox,
   TextBox,
 } from '../emotion/component';
-import { Clubs } from '../../json/club-controller';
 import { Header1, Inner, Section } from '../emotion/GlobalStyle';
-import { ClubList, NavigateMore, DivisionLine, LoadingContainer } from './component';
-import { useGetVideosQuery } from '../../store/projectApi';
+import { ClubList, NavigateMore, DivisionLine, ClubArrayContainer } from './component';
+import {
+  useGetVideosByTopViewQuery,
+  useGetVideosQuery,
+} from '../../store/controller/projectController';
 import { ProjectBoxProps } from '../../types/globalType';
-import ApiFetcher from '../../util/util';
+import { ApiFetcher } from '../../util/util';
+import { useGetLogosQuery } from '../../store/controller/clubController';
 
 const Index = () => {
-  const queryResult = useGetVideosQuery({});
-
   return (
     <Inner>
       <Banner large />
 
       <Section gap="3.2">
         <Header1>현재 다양한 클럽이 챌린저스에서 활동하고 있어요</Header1>
-        <ClubList>
-          {Clubs.map((club) => (
-            <ClubComponent
-              key={club.id}
-              name={club.name}
-              clubImg={`${process.env.PUBLIC_URL}/img/${club.clubImg}`}
-            />
-          ))}
-        </ClubList>
+        <ApiFetcher query={useGetLogosQuery({})} loading={<div>로딩중...</div>}>
+          {(data) => {
+            const chunkedData = [];
+            for (let i = 0; i < data.length; i += 7) {
+              chunkedData.push(data.slice(i, i + 7));
+            }
+            return (
+              <ClubList>
+                {chunkedData.map((clubArray, index) => (
+                  <ClubArrayContainer key={uuidv4()} clubArray={clubArray} index={index} />
+                ))}
+              </ClubList>
+            );
+          }}
+        </ApiFetcher>
       </Section>
 
       <DivisionLine />
@@ -42,12 +50,14 @@ const Index = () => {
           <NavigateMore sort="popular" />
         </TextBox>
 
-        <ApiFetcher query={queryResult} loading={<LoadingContainer />}>
-          <FlexWrapContainer>
-            {queryResult.data?.slice(0, 6).map((project: ProjectBoxProps) => (
-              <ProjectBox key={project.id} projectData={project} />
-            ))}
-          </FlexWrapContainer>
+        <ApiFetcher query={useGetVideosByTopViewQuery({})} loading={<LoadingContainer />}>
+          {(data) => (
+            <FlexWrapContainer>
+              {data.content.map((project: ProjectBoxProps) => (
+                <ProjectBox key={project.id} projectData={project} />
+              ))}
+            </FlexWrapContainer>
+          )}
         </ApiFetcher>
       </Section>
 
@@ -57,12 +67,14 @@ const Index = () => {
           <NavigateMore sort="recent" />
         </TextBox>
 
-        <ApiFetcher query={queryResult} loading={<LoadingContainer />}>
-          <FlexWrapContainer>
-            {queryResult.data?.slice(0, 6).map((project: ProjectBoxProps) => (
-              <ProjectBox key={project.id} projectData={project} />
-            ))}
-          </FlexWrapContainer>
+        <ApiFetcher query={useGetVideosQuery({})} loading={<LoadingContainer />}>
+          {(data) => (
+            <FlexWrapContainer>
+              {data.content.map((project: ProjectBoxProps) => (
+                <ProjectBox key={project.id} projectData={project} />
+              ))}
+            </FlexWrapContainer>
+          )}
         </ApiFetcher>
       </Section>
     </Inner>

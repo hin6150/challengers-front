@@ -10,11 +10,12 @@ import {
   ContainerType,
   ProjectBoxProps,
   SelectBoxProps,
+  SelectBoxProps2,
   TagListType,
   TextBoxProps,
   TextInputBoxType,
 } from '../../types/globalType';
-import { Body2, Header1, Section } from './GlobalStyle';
+import { Body2, Header1 } from './GlobalStyle';
 
 export const TagList = ({ children, small }: TagListType) => (
   <div
@@ -55,7 +56,58 @@ export const ContainerComponent = ({ children }: ContainerType) => {
  * @StyledSelectBox
  */
 
-export const SelectBox = ({ options, value, onChange, background }: SelectBoxProps) => {
+export const SelectBox = ({
+  options,
+  value,
+  onChange,
+  background,
+  customStyle,
+}: SelectBoxProps) => {
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value;
+    onChange(selectedValue);
+  };
+
+  return (
+    <select
+      value={value}
+      onChange={handleChange}
+      css={css`
+        padding: 0.8rem;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        background: ${background || `${theme.palette.primary[500]}`};
+        ${theme.typography.body3Bold}
+        color: ${theme.palette.gray.white};
+        padding-right: 2.4rem;
+        border-radius: 0.8rem;
+        background-size: 1.2rem;
+        background-repeat: no-repeat;
+        background-position: right 0.6rem center;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='0.75em' height='0.4375em' viewBox='0 0 12 7'%3E%3Cpath fill='%23ffffff' d='M6 6.8l4-4H2l4 4z'/%3E%3C/svg%3E");
+        & option {
+          ${theme.typography.body3Bold}
+        }
+        ${customStyle}
+      `}
+    >
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  );
+};
+export const SelectBox2 = ({
+  options,
+  value,
+  onChange,
+  background,
+  customStyle,
+}: SelectBoxProps2) => {
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     onChange(selectedValue);
@@ -81,17 +133,20 @@ export const SelectBox = ({ options, value, onChange, background }: SelectBoxPro
         background-repeat: no-repeat;
         background-position: right 0.6rem center;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='0.75em' height='0.4375em' viewBox='0 0 12 7'%3E%3Cpath fill='%23ffffff' d='M6 6.8l4-4H2l4 4z'/%3E%3C/svg%3E");
+        & option {
+          ${theme.typography.body3Bold}
+        }
+        ${customStyle}
       `}
     >
       {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
+        <option key={option.value} value={option.value}>
+          {option.label}
         </option>
       ))}
     </select>
   );
 };
-
 /**
  * 라벨 컴포넌트
  * @param children 컴포넌트 안에 넣을 자식 요소
@@ -143,6 +198,14 @@ export const ProjectBox = ({ projectData }: { projectData: ProjectBoxProps }) =>
         border-radius: 1.6rem;
         gap: 1.6rem;
         cursor: pointer;
+
+        box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+
+        transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+        &:hover {
+          box-shadow: 0 6px 8px rgba(255, 255, 255, 0.15);
+          transform: scale(1.05);
+        }
       `}
     >
       <img
@@ -167,33 +230,46 @@ export const ProjectBox = ({ projectData }: { projectData: ProjectBoxProps }) =>
   );
 };
 
-export const LoadingBox = () => {
-  return (
+const loadingAnimation = css`
+  background: linear-gradient(
+    -90deg,
+    ${theme.palette.gray[600]} 00%,
+    #575757 50%,
+    ${theme.palette.gray[600]} 100%
+  );
+  background-size: 400% 400%;
+  animation: pulse 1.7s ease-in-out infinite;
+  @keyframes pulse {
+    to {
+      background-position-x: -200%;
+    }
+  }
+`;
+
+const LoadingBox = () => (
+  <div
+    css={css`
+      display: flex;
+      flex-direction: column;
+      padding: 1.6rem 2rem;
+      width: 38.4rem;
+      height: 40rem;
+      background-color: ${theme.palette.gray[900]};
+      border-radius: 1.6rem;
+      gap: 1.6rem;
+      cursor: pointer;
+    `}
+  >
     <div
       css={css`
-        display: flex;
-        flex-direction: column;
-        padding: 1.6rem 2rem;
-        width: 38.4rem;
-        height: 40rem;
-        background: ${theme.palette.gray[900]};
-        border-radius: 1.6rem;
-        gap: 1.6rem;
-        cursor: pointer;
+        height: 22.4rem;
+        border-radius: 1.2rem;
+        object-fit: cover;
+        ${loadingAnimation}
       `}
-    >
-      <div
-        css={css`
-          height: 22.4rem;
-          width: 35.2rem;
-          border-radius: 1.2rem;
-          object-fit: cover;
-          background-color: ${theme.palette.gray[600]};
-        `}
-      />
-    </div>
-  );
-};
+    />
+  </div>
+);
 
 /**
  * FlexContainer 컴포넌트
@@ -201,27 +277,47 @@ export const LoadingBox = () => {
  * @param children - FlexContainer 내부의 자식 요소
  */
 
-export const FlexWrapContainer = ({ children }: ContainerType) => {
-  return (
-    <div
-      css={css`
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        width: 100%;
-        gap: 2.4rem;
-      `}
-    >
-      {children}
-    </div>
-  );
-};
+export const FlexWrapContainer = ({ children }: ContainerType) => (
+  <div
+    css={css`
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      width: 100%;
+      gap: 2.4rem;
+    `}
+  >
+    {children}
+  </div>
+);
+
+export const LoadingContainer = () => (
+  <FlexWrapContainer>
+    <LoadingBox />
+    <LoadingBox />
+    <LoadingBox />
+    <LoadingBox />
+    <LoadingBox />
+    <LoadingBox />
+  </FlexWrapContainer>
+);
 
 /**
  * 버튼 컴포넌트
  * @param text 버튼 안의 text 내용
- * @param type 버튼의 형태(large, small, modal, modal_cancel)
+ * @param type 버튼의 형태
  */
-export const ButtonBox = ({ text, type, onClick, cancel }: ButtonBoxProps) => {
+export const ButtonBox = ({
+  text,
+  type,
+  onClick,
+  cancel,
+  submit,
+  width,
+  height,
+  color,
+  disabled,
+  backgroundColor,
+}: ButtonBoxProps) => {
   const buttonStyles = {
     large: css`
       width: 100%;
@@ -234,6 +330,23 @@ export const ButtonBox = ({ text, type, onClick, cancel }: ButtonBoxProps) => {
       ${theme.typography.header2}
       color: ${cancel && theme.palette.gray.black};
       background-color: ${cancel && theme.palette.gray[300]};
+      background-color: ${backgroundColor};
+      &:hover {
+        background-color: ${color};
+      }
+    `,
+    modalSmall: css`
+      width: 14rem;
+      height: 4rem;
+      ${theme.typography.body3}
+      color: ${cancel && theme.palette.gray.black};
+      background-color: ${cancel && theme.palette.gray[300]};
+    `,
+    custom: css`
+      width: 19.8rem;
+      height: 5.6rem;
+      background-color: ${backgroundColor || '#212121'};
+      ${theme.typography.body1Bold}
     `,
     small: css`
       width: 22.4rem;
@@ -241,16 +354,23 @@ export const ButtonBox = ({ text, type, onClick, cancel }: ButtonBoxProps) => {
       ${theme.typography.body1Bold}
     `,
     very_small: css`
-      width: 9.6rem;
-      height: 5.6rem;
+      padding: 1.7rem 3.4rem;
       ${theme.typography.body1Bold};
+    `,
+    large_modal: css`
+      width: 100%;
+      padding: 2rem;
+      background-color: ${backgroundColor};
+      ${theme.typography.header2};
     `,
   };
 
   const buttonStyle = css`
     border-radius: ${type === 'large' ? 1.2 : 0.8}rem;
     background-color: ${theme.palette.primary[500]};
-    ${buttonStyles[type]}
+    color: ${theme.palette.gray.white};
+    ${buttonStyles[type]};
+    background-color: ${disabled && '#88898A'};
 
     &:active {
       transform: scale(0.98);
@@ -259,7 +379,12 @@ export const ButtonBox = ({ text, type, onClick, cancel }: ButtonBoxProps) => {
   `;
 
   return (
-    <button type="button" css={buttonStyle} onClick={onClick}>
+    <button
+      type={submit ? 'submit' : 'button'}
+      css={buttonStyle}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {text}
     </button>
   );
@@ -288,7 +413,13 @@ export const Banner = ({ large }: BannerProps) => {
         `}
       />
 
-      <Section gap={large ? '2.4' : '1.2'}>
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+          gap: ${large ? '2.4' : '1.2'}rem;
+        `}
+      >
         <h1
           css={css`
             ${large ? theme.typography.title : theme.typography.header1}
@@ -311,7 +442,7 @@ export const Banner = ({ large }: BannerProps) => {
           내가 소속한 클럽을 등록하고 챌린저스 서비스에서
           <br /> 사이드 프로젝트를 기록과 소통해보세요
         </p>
-      </Section>
+      </div>
     </div>
   );
 };
@@ -321,7 +452,7 @@ export const Banner = ({ large }: BannerProps) => {
  * @param name 가져올 이미지의 클럽명
  * @param clubImg 클럽 로고 이미지의 url
  */
-export const ClubComponent = ({ name, clubImg }: ClubComponentProps) => {
+export const ClubComponent = ({ name, logo }: ClubComponentProps) => {
   return (
     <div
       css={css`
@@ -332,12 +463,13 @@ export const ClubComponent = ({ name, clubImg }: ClubComponentProps) => {
     >
       <img
         css={css`
-          max-width: 16rem;
-          max-height: 4rem;
+          max-width: 13.6rem;
+          max-height: 6.4rem;
           object-fit: cover;
+          filter: invert(0.1) brightness(10);
         `}
-        src={clubImg}
-        alt={name}
+        src={logo}
+        alt={name || logo}
       />
     </div>
   );
@@ -357,8 +489,34 @@ export const GridBox = ({ children }: ContainerType) => {
     </div>
   );
 };
-
-export const TextInputBox = ({ type, text, size, max, inputType }: TextInputBoxType) => {
+export const GridBox2 = ({ children }: ContainerType) => {
+  return (
+    <div
+      css={css`
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+        gap: 3.2rem;
+      `}
+    >
+      {children}
+    </div>
+  );
+};
+export const TextInputBox = ({
+  type,
+  text,
+  size,
+  max,
+  inputType,
+  onChange,
+  register,
+  onKeyDown,
+  onBlur,
+  value,
+  name,
+}: TextInputBoxType) => {
   const style = {
     header1: css`
       ${theme.typography.header1}
@@ -372,7 +530,6 @@ export const TextInputBox = ({ type, text, size, max, inputType }: TextInputBoxT
     border: css`
       font-size: 2rem;
       letter-spacing: -0.6px;
-      border-bottom: 1px solid #cbcbcb;
     `,
   };
   return (
@@ -389,6 +546,14 @@ export const TextInputBox = ({ type, text, size, max, inputType }: TextInputBoxT
       size={size}
       maxLength={max}
       type={inputType}
+      onKeyDown={onKeyDown}
+      onChange={onChange}
+      value={value}
+      onBlur={onBlur}
+      name={name}
+      // onChange={onChange}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...register}
     />
   );
 };
@@ -401,7 +566,7 @@ export const TextInputBox = ({ type, text, size, max, inputType }: TextInputBoxT
 export const TextBox = ({ children, margin }: TextBoxProps) => (
   <div
     css={css`
-      width: 100%;
+      width: 120rem;
       display: flex;
       justify-content: space-between;
       margin-bottom: ${margin}rem;
