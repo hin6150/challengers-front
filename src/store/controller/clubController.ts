@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const clubController = createApi({
   reducerPath: 'clubController',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api/v1/club/',
+    baseUrl: 'http://101.101.216.151:8080/api/v1/club/',
   }),
 
   endpoints: (builder) => ({
