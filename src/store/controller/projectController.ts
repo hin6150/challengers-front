@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const projectController = createApi({
   reducerPath: 'projectApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/v1/project/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://101.101.216.151:8080/api/v1/project/' }),
 
   endpoints: (builder) => ({
     getVideos: builder.query({

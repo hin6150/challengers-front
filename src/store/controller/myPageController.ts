@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const myPageController: any = createApi({
   reducerPath: 'myPageController',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/v1/mypage' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://101.101.216.151:8080/api/v1/mypage' }),
 
   endpoints: (builder) => ({
     getInfo: builder.query({
