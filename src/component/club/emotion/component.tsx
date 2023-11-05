@@ -2,13 +2,14 @@
 import React, { ReactNode, useState } from 'react';
 import { css } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ButtonBox, ClubComponent } from '../../emotion/component';
 import theme from '../../../styles/theme';
 import { Body1, Body1Bold } from '../../emotion/GlobalStyle';
 import { ClubBoxProps, ContainerType, LinkToProps } from '../../../types/globalType';
 import { openModal } from '../../../store/slice/modalSlice';
 import { setCommentClubData } from '../../../store/slice/commentSlice';
+import { selectUser } from '../../../store/slice/userSlice';
 
 /**
  * '클럽 마스터 이메일 보기' 버튼을 눌렀을 때 뜨게 되는 컴포넌트
@@ -57,9 +58,12 @@ export const ClubContainer = ({ children }: ContainerType) => {
  */
 export const ClubBox = ({ id, name, logo, text, onClick }: ClubBoxProps) => {
   const dispatch = useDispatch();
+  const { accessToken } = useSelector(selectUser);
   const handleButtonClick = () => {
     if (onClick) {
       onClick();
+    } else if (!accessToken) {
+      alert('로그인을 해주세요');
     } else {
       dispatch(setCommentClubData({ id, name, logo }));
       dispatch(openModal({ modalType: 'CommentBlackModal' }));
@@ -213,6 +217,48 @@ export const ClubPagNation = ({ totalPage }: { totalPage: number }) => {
         </PageNumber>
       ))}
       <RightArrow onClick={goToNextPage} disabled={currentPage === totalPages} />
+    </div>
+  );
+};
+
+export const MyClubButton = ({
+  totalPages,
+  setMyViewPage,
+  myClubPage,
+}: {
+  totalPages: Array<string>;
+  setMyViewPage: React.Dispatch<React.SetStateAction<number>>;
+  myClubPage: number;
+}) => {
+  const handlePageChange = (index: string) => {
+    setMyViewPage(Number(index));
+  };
+  return (
+    <div
+      css={css`
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.8rem;
+      `}
+    >
+      {totalPages.map((pageIndex: string) => (
+        <button
+          key={pageIndex}
+          type="button"
+          aria-label="Save"
+          onClick={() => handlePageChange(pageIndex)}
+          css={css`
+            width: 1.6rem;
+            height: 1.6rem;
+            background-color: ${myClubPage === Number(pageIndex)
+              ? theme.palette.primary[500]
+              : theme.palette.gray.white};
+            border-radius: 50%;
+            cursor: pointer;
+          `}
+        />
+      ))}
     </div>
   );
 };

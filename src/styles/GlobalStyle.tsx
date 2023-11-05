@@ -102,12 +102,13 @@ const GlobalStyle = () => {
           font-family: 'Pretendard', 'Noto Sans KR', 'sans-serif';
           background-color: #000;
           height: 100vh;
-          overflow: scroll;
-          -ms-overflow-style: none; /* 인터넷 익스플로러 */
-          scrollbar-width: none; /* 파이어폭스 */
+          overflow-y: scroll;
+          /* -ms-overflow-style: none; 인터넷 익스플로러
+          scrollbar-width: none; 파이어폭스
           &::-webkit-scrollbar {
             display: none;
-          }
+          } */
+
           body {
             font-size: 1.6rem;
             font-style: normal;
@@ -149,6 +150,25 @@ const GlobalStyle = () => {
         }
         input {
           outline: none;
+        }
+        div {
+          -webkit-touch-callout: none;
+          user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          -webkit-user-select: none;
+        }
+        img {
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -o-user-select: none;
+          user-select: none;
+          -webkit-user-drag: none;
+          -khtml-user-drag: none;
+          -moz-user-drag: none;
+          -o-user-drag: none;
+          user-drag: none;
         }
       `}
     />
